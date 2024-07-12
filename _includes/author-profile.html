@@ -239,7 +239,13 @@
           </a>
         </li>
       {% endif %}
-
+      {% if author.qq %}
+        <li>
+          <a href="http://wpa.qq.com/msgrd?v=3&uin={{ author.qq }}&site=qq&menu=yes" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+            <i class="fa-brands fa-qq" aria-hidden="true"></i><span class="label">{{ site.data.ui-text[site.locale].qq_label | default: "QQ" }}</span>
+          </a>
+        </li>
+      {% endif %}
       {% include author-profile-custom-links.html %}
     </ul>
   </div>

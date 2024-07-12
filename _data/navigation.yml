@@ -1,26 +1,21 @@
 main:
-  - title: "Quick-Start Guide"
-    url: /docs/quick-start-guide/
-    description: this is description test
+  - title: "Code key"
+    url: /pages/
+    description: 程序编程相关的内容
   - title: "Posts"
     url: /year-archive/
-  - title: "Categories"
+  - title: "entertainment"
     url: /categories/
   - title: "Tags"
     url: /tags/
-  - title: "Pages"
+  - title: "games"
     url: /page-archive/
-  - title: "Collections"
-    url: /collection-archive/
-  - title: "External Link"
-    url: https://google.com
-    target: _blank
 
-docs:
-  - title: Getting Started
+pages_nav:
+  - title: linux
     children:
-      - title: "Quick-Start Guide"
-        url: /docs/quick-start-guide/
+      - title: "Linux virtual network"
+        url: /pages/network/virt-network/
       - title: "Structure"
         url: /docs/structure/
       - title: "Installation"

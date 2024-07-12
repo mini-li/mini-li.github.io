@@ -1,18 +1,17 @@
 # /_data/authors.yml
 
 lee:
-  name        : "lee"
-  bio         : "What's different about you?"
+  name        : "Sunshine After Rain"
+  bio         : "Don't stop in the wind and rain anymore"
   avatar      : "/assets/images/sun_avatar.png"
+  github      : "mini-li"
+  qq          : "450653917"
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
       url: "mailto:qiang.li.max@gmail.com"
     - label: "wechat"
       icon: "fa-brands fa-weixin"
-      url: "/assets/images/wechat.jpg"
-    - label: "450653917"
-      icon: "fa-brands fa-qq"
       url: "/assets/images/wechat.jpg"
     # - label: "Twitter"
     #   icon: "fab fa-fw fa-twitter-square"
