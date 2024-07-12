@@ -35,3 +35,5 @@ gem "http_parser.rb", "~> 0.6.0", :platforms => [:jruby]
 gem "minimal-mistakes-jekyll"
 
 gem 'jekyll-sass-converter', '~> 3.0'
+
+gem 'font-awesome-sass'

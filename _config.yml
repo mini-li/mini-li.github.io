@@ -182,3 +182,5 @@ sass:
 
 
 page_excerpts: true
+
+locale                   : "en-US"
