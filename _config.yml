@@ -19,9 +19,9 @@
 # in the templates via {{ site.myvariable }}.
 
 title: lee's blog
-subtitle: "Version 2.0"
+subtitle: "fight for free"
 # used to assign a site author
-name: "minLee"
+name: "lee"
 email: qiang.li.max@gmail.com
 description: "A flexible Jekyll theme for your blog or site with a minimalist aesthetic."
 # description: >- # this means to ignore newlines until "baseurl:"
@@ -30,15 +30,15 @@ description: "A flexible Jekyll theme for your blog or site with a minimalist ae
 #   Google search results) and in your feed.xml site description.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://mini-li.github.io" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: jekyllrb
-github_username:  mini-li
-
 repository: "mini-li/mini-li.github.io"
 # Build settings
 # theme: minima
 theme: minimal-mistakes-jekyll
 # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 minimal_mistakes_skin: "default"
+logo: assets/images/logo.jpg
+words_per_minute         : 200
+enable_copy_code_button  : true
 # head_scripts:
   # - https://code.jquery.com/jquery-3.2.1.min.js
   # - /assets/js/your-custom-head-script.js
@@ -47,7 +47,18 @@ minimal_mistakes_skin: "default"
 #   teaser: /assets/images/my-awesome-post-teaser.jpg
 
 plugins:
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-gist
   - jekyll-feed
+  - jekyll-include-cache
+# mimic GitHub Pages with --safe
+whitelist:
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jekyll-include-cache
 
 # Exclude from processing.
 # The following items will not be processed, by default.
@@ -70,8 +81,49 @@ plugins:
 #   - vendor/ruby/
 
 
-# paginate: 5 # amount of posts to show
-# paginate_path: /page:num/
+paginate: 5 # amount of posts to show
+paginate_path: /page:num/
+# Pagination with jekyll-paginate-v2
+# See https://github.com/sverrirs/jekyll-paginate-v2/blob/master/README-GENERATOR.md#site-configuration
+#   for configuration details
+pagination:
+  # Set enabled to true to use paginate v2
+  # enabled: true
+  debug: false
+  collection: 'posts'
+  per_page: 10
+  permalink: '/page/:num/'
+  title: ':title - page :num'
+  limit: 0
+  sort_field: 'date'
+  sort_reverse: true
+  category: 'posts'
+  tag: ''
+  locale: ''
+  trail:
+    before: 2
+    after: 2
+
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      read_time: true
+      comments: true
+      share: true
+      related: true
+      
+breadcrumbs: true  # disabled by default
+
+author: lee
+
+copyright                : # "copyright" name, defaults to site.title
+copyright_url            : # "copyright" URL, defaults to site.url
 
 sass:
+  sass_dir: _sass
+  style: compressed # https://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style
   quiet_deps: true    # Disable printing deprecation warnings to terminal

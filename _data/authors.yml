@@ -1,0 +1,17 @@
+# /_data/authors.yml
+
+lee:
+  name        : "lee"
+  bio         : "What's different about you?"
+  avatar      : "/assets/images/sun_avatar.png"
+  links:
+    - label: "Email"
+      icon: "fas fa-fw fa-envelope-square"
+      url: "mailto:qiang.li.max@gmail.com"
+    # - label: "Website"
+    #   icon: "fas fa-fw fa-link"
+    #   url: "https://thewhip.com"
+    # - label: "Twitter"
+    #   icon: "fab fa-fw fa-twitter-square"
+    #   url: "https://twitter.com/extravagantman"
+
