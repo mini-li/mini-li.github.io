@@ -172,7 +172,7 @@ breadcrumbs: true  # disabled by default
 
 author: lee
 
-copyright                : # "copyright" name, defaults to site.title
+copyright                : lee.不会有人认真的吧
 copyright_url            : # "copyright" URL, defaults to site.url
 
 sass:
@@ -184,3 +184,4 @@ sass:
 page_excerpts: true
 
 locale                   : "en-US"
+search: true
