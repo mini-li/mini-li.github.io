@@ -17,19 +17,19 @@ main:
 pages_nav:
   - title: linux
     children:
-      - title: "Linux virtual network"
-        url: /pages/network/virt-network/
-      - title: "Structure"
+      - title: "Private DNS setup"
+        url: /pages/linux/private-dns-setup/
+      - title: "Ansible"
         url: /docs/structure/
       - title: "Installation"
         url: /docs/installation/
       - title: "Upgrading"
         url: /docs/upgrading/
 
-  - title: Customization
+  - title: Network
     children:
-      - title: "Configuration"
-        url: /docs/configuration/
+      - title: "Linux virtual network"
+        url: /pages/network/virt-network
       - title: "Navigation"
         url: /docs/navigation/
       - title: "UI Text"

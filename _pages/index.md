@@ -9,7 +9,8 @@ sidebar: false
 
 
 1. linux
-    - Private DNS setup
+    - [Private DNS setup](/pages/linux/private-dns-setup)
+    - [iptables](/pages/linux/iptables/)
 2. network
     - [Linux virtual network](/pages/network/virt-network)
     - overlay

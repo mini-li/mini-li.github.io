@@ -14,4 +14,6 @@ share: false
 
 这个博客是通过[jekyll](https://jekyllrb.com/)搭建的，个人觉得比较hexo和hugo，jekyll用起来要方便很多
 
+主题是用的[mmistakes](https://mmistakes.github.io/minimal-mistakes/docs/configuration/)
+
 如果有什么问题或者疑问，可以通过左侧的联系方式联系到我。

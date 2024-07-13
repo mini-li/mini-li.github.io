@@ -509,10 +509,10 @@
   border-radius: $border-radius;
   -webkit-box-shadow: $box-shadow;
   box-shadow: $box-shadow;
-
+  font-size: $type-size-5;
   .nav__title {
     color: #fff;
-    font-size: $type-size-6;
+    font-size: $type-size-7;
     background: $primary-color;
     border-start-start-radius: $border-radius;
     border-start-end-radius: $border-radius;
@@ -529,10 +529,10 @@
   padding: 0;
   width: 100%;
   list-style: none;
-  font-size: $type-size-6;
+  font-size: $type-size-5;
 
   @include breakpoint($large) {
-    font-size: $type-size-7;
+    font-size: $type-size-6;
   }
 
   a {
