@@ -3,6 +3,8 @@ title: "Index"
 permalink: /pages/
 excerpt: "所有归类的文章的索引."
 toc: false
+share: false
+sidebar: false
 ---
 
 

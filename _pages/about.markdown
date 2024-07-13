@@ -1,18 +1,17 @@
 ---
-layout: default
+layout: single
 title: About
-permalink: /about.html
+permalink: /about/
+author_profile: true
+sidebar: false
+share: false
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+欢迎来到我的频道
+我一名程序员主要是做后端开发
+平时会分享一些自己认为还不错的内容
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
+这个博客是通过[jekyll](https://jekyllrb.com/)搭建的，个人觉得比较hexo和hugo，jekyll用起来要方便很多
 
-
-[jekyll-organization]: https://github.com/jekyll
+如果有什么问题或者疑问，可以通过左侧的联系方式联系到我。

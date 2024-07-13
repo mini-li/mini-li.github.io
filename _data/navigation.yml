@@ -1,4 +1,7 @@
 main:
+  - title: "About"
+    url: /about/
+    description: 个人介绍
   - title: "Code key"
     url: /pages/
     description: 程序编程相关的内容
