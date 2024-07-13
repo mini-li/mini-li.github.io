@@ -18,10 +18,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Lee's blog
-# masthead_title: "lee"
-subtitle: "Fight for freedom"
-# used to assign a site author
+title: "Lee's   blog"
 name: "lee"
 email: qiang.li.max@gmail.com
 description: "A flexible Jekyll theme for your blog or site with a minimalist aesthetic."
@@ -34,11 +31,41 @@ url: "https://mini-li.github.io" # the base hostname & protocol for your site, e
 repository: "mini-li/mini-li.github.io"
 # Build settings
 # theme: minima
-theme: minimal-mistakes-jekyll
+# theme: minimal-mistakes-jekyll
+theme: just-the-docs
 # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
-minimal_mistakes_skin: "default"
-logo: assets/images/logo.jpg
-words_per_minute         : 200
+# minimal_mistakes_skin: "default"
+logo: assets/images/sun_avatar.png
+favicon_ico: "/assets/images/bx-ghost.svg"
+search_enabled: true
+
+search:
+  # Split pages into sections that can be searched individually
+  # Supports 1 - 6, default: 2
+  heading_level: 2
+  # Maximum amount of previews per search result
+  # Default: 3
+  previews: 3
+  # Maximum amount of words to display before a matched word in the preview
+  # Default: 5
+  preview_words_before: 5
+  # Maximum amount of words to display after a matched word in the preview
+  # Default: 10
+  preview_words_after: 10
+  # Set the search token separator
+  # Default: /[\s\-/]+/
+  # Example: enable support for hyphenated search words
+  tokenizer_separator: /[\s/]+/
+  # Display the relative url in search results
+  # Supports true (default) or false
+  rel_url: true
+  # Enable or disable the search button that appears in the bottom right corner of every page
+  # Supports true or false (default)
+  button: false
+  # Focus the search input by pressing `ctrl + focus_shortcut_key` (or `cmd + focus_shortcut_key` on macOS)
+  focus_shortcut_key: 'k'
+
+words_per_minute         : 180
 enable_copy_code_button  : true
 # head_scripts:
   # - https://code.jquery.com/jquery-3.2.1.min.js
@@ -53,6 +80,9 @@ plugins:
   - jekyll-gist
   - jekyll-feed
   - jekyll-include-cache
+  - jekyll-seo-tag
+  - jekyll-github-metadata
+
 # mimic GitHub Pages with --safe
 whitelist:
   - jekyll-paginate
@@ -83,64 +113,35 @@ include:
 #   - vendor/gems/
 #   - vendor/ruby/
 
-
-paginate: 5 # amount of posts to show
-paginate_path: /page:num/
-# Pagination with jekyll-paginate-v2
-# See https://github.com/sverrirs/jekyll-paginate-v2/blob/master/README-GENERATOR.md#site-configuration
-#   for configuration details
-pagination:
-  # Set enabled to true to use paginate v2
-  # enabled: true
-  debug: false
-  collection: 'posts'
-  per_page: 10
-  permalink: '/page/:num/'
-  title: ':title - page :num'
-  limit: 0
-  sort_field: 'date'
-  sort_reverse: true
-  category: 'posts'
-  tag: ''
-  locale: ''
-  trail:
-    before: 2
-    after: 2
-
-
-# Defaults
-defaults:
-  # _posts
-  - scope:
-      path: ""
-      type: posts
-    values:
-      layout: single
-      author_profile: true
-      read_time: true
-      comments: true
-      share: true
-      related: true
-  # _pages
-  - scope:
-      path: ""
-      type: pages
-    values:
-        layout: single
-        read_time: true
-        author_profile: false
-        share: true
-        comments: true
-        toc_sticky: true
-        sidebar:
-          nav: "pages_nav"
-      
-breadcrumbs: true  # disabled by default
+exclude:
+ # from https://github.com/jekyll/jekyll/blob/master/lib/site_template/_config.yml:
+   - .sass-cache/
+   - .jekyll-cache/
+   - gemfiles/
+   - Gemfile
+   - Gemfile.lock
+   - node_modules/
+   - vendor/bundle/
+   - vendor/cache/
+   - vendor/gems/
+   - vendor/ruby/
+ # specific to the theme website:
+   - bin/
+   - lib/
+   - "*.gemspec"
+   - "*.gem"
+   - LICENSE.txt
+   - package.json
+   - package-lock.json
+   - Rakefile
+   - README.md
+   - CODE_OF_CONDUCT.md
+   - docker-compose.yml
+   - Dockerfile
+ # theme test code
+   - fixtures/
 
 author: lee
-
-copyright                : lee.不会有人认真的吧
-copyright_url            : # "copyright" URL, defaults to site.url
 
 sass:
   sass_dir: _sass
@@ -151,4 +152,39 @@ sass:
 page_excerpts: true
 
 locale                   : "en-US"
-search: true
+nav_enabled: true
+mermaid:
+  # Version of mermaid library
+  # Pick an available version from https://cdn.jsdelivr.net/npm/mermaid/
+  version: "9.1.3"
+
+
+# Aux links for the upper right navigation
+aux_links:
+  "Go to my GitHub":
+    - "//github.com/mini-li"
+
+# Makes Aux links open in a new tab. Default is false
+aux_links_new_tab: true
+
+
+
+# Footer content
+# appears at the bottom of every page's main content
+# Note: The footer_content option is deprecated and will be removed in a future major release. Please use `_includes/footer_custom.html` for more robust
+# markup / liquid-based content.
+footer_content: "Copyright &copy; 2024 lee. -> Powered by Jekyll(一个很牛逼的框架)."
+
+# Footer last edited timestamp
+last_edit_timestamp: true # show or hide edit time - page must have `last_modified_date` defined in the frontmatter
+last_edit_time_format: "%b %e %Y at %I:%M %p" # uses ruby's time format: https://ruby-doc.org/stdlib-2.7.0/libdoc/time/rdoc/Time.html
+
+# Footer "Edit this page on GitHub" link text
+gh_edit_link: true # show or hide edit this page link
+gh_edit_link_text: "Edit this page on GitHub."
+gh_edit_repository: "https://github.com/mini-li/mini-li.github.io" # the github URL for your repo
+gh_edit_branch: "main" # the branch that your docs is served from
+# gh_edit_source: docs # the source that your files originate from
+gh_edit_view_mode: "tree" # "tree" or "edit" if you want the user to jump into the editor immediately
+
+QQ: 450653917
