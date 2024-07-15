@@ -137,8 +137,8 @@ ip netns  exec ns1 ping 172.16.21.254
 
 - 三层模式和二层模式几乎相同，改变一下mod就行区别只是在三层模式下物理网卡表现为路由器二层模式下表现为交换机
 
-**Note:** 在L3模式中抓到ARP，二层广播和组播都不处理，并且这里是不可以直接同underlay网络的，需要在路由器上配置路由才行.
-{: .notice--warning}
+{: .warning }
+>在L3模式中抓到ARP，二层广播和组播都不处理，并且这里是不可以直接同underlay网络的，需要在路由器上配置路由才行.
 
 - 直接通过不同的三层测试:
 
@@ -177,10 +177,9 @@ ip netns exec ns2 ping 192.168.11.2
 - 查看对应网桥的mac地址转发表:`bridge fdb show br br0`
 ![bridge-vlan](/assets/images/network/bridge-vlan.png)
 
-**ProTip:** \
+{: .note }
 *pvid*：端口的默认vlan，所有从该端口输入的没有携带vlan的报文，会被打上该vlan标签，该选项只对输入报文有效。\
 *untagged*：端口的untag vlan，输出报文携带该vlan时，会被剥离。
-{: .notice--info}
 
 - 实验操作：
 
@@ -305,9 +304,9 @@ ping 172.18.2.2 -I vrf0
 3. 添加路由表`ip rule add table 110` 查看指定路由表 `ip route list table 100`
 4. 向路由表添加路由 `ip route add 172.16.20.0/23 via 172.16.10.60 table 100`获取目标地址的路由`ip route get 172.16.20.254`
 
-**ProTip:** 这里第一列数字代表优先级，数字越小优先级越高
+{: .note }
+这里第一列数字代表优先级，数字越小优先级越高
 最后的一列代表需要查找的路由表可以是数字或者名字，可以通过ip route show table local查看具体的路由信息from all 匹配所有的入口流量
-{: .notice--info}
 
 >0:        from all lookup local \
 >32766:        from all lookup main \
