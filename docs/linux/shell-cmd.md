@@ -920,3 +920,11 @@ awk 'BEGIN{ "date" | getline d; split(d,mon) ; print mon[2]}'   # 将d设为数�
 awk 'BEGIN{for(n=0;n++<9;){for(i=0;i++<n;)printf i"x"n"="i*n" ";print ""}}'     # 乘法口诀
 
 ```
+
+### cksum
+
+```shell
+# 输出文件的 CRC 校验和和字节计数（使用 CRC 算法）
+cksum /etc/passwd
+# 3512668765 995 /etc/passwd
+```
