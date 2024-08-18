@@ -6,4 +6,3 @@ has_children: true
 permalink: docs/k8s
 ---
 
-
