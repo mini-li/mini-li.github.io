@@ -18,6 +18,8 @@ kind 主要是为了测试 Kubernetes 本身而设计的，但也可以用于本
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: mycluster
+featureGates:
+- GracefulNodeShutdown
 nodes:
 - role: control-plane
   extraMounts:
