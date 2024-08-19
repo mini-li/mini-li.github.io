@@ -5,7 +5,7 @@ parent: k8s
 has_children: false
 ---
 
-# 1. 访问控制流程
+## 1. 访问控制流程
 
 ![access-control](/assets/images/k8s/access-control.png)
 
@@ -13,10 +13,9 @@ has_children: false
 
 ## 2. 身份认证
 
-- 普通身份：由集群的证书机构签名的合法证书的用户。（下面介绍两种通过证书签发获取的方式）  
-- 管理身份：服务账号与一组以 Secret 保存的凭据相关  
-- 匿名身份：匿名访问默认情况下是被禁用的，可以通过--anonymous-auth=true来启用。  
-
+- 普通身份：由集群的证书机构签名的合法证书的用户（下面介绍两种通过证书签发获取的方式）  
+- 管理身份：服务账号与一组以 Secret 保存的凭据相关 （sa）
+- 匿名身份：匿名访问默认情况下是被禁用的，可以通过--anonymous-auth=true来启用  
 
 ### 2.1 私钥审批认证获取证书
 
@@ -93,3 +92,96 @@ kubectl config set-context user01 --cluster=mycluster --user=user01
 kubectl config use-context user01
 ```
 
+
+## 4. Node  
+
+- Node鉴权是k8s apiserver的一种特殊用途的鉴权模式，专门用于对kubelet发出的请求进行鉴权  
+- Node鉴权组件默认允许kubelet执行一系列操作  
+  - 如对services, endpoints, nodes, pods, secrets, configmaps, pvcs以及绑定到kubelet所在节点的与Pod相关的持久化卷的读取操作,写入节点和节点状态，Pod和Pod状态，事件信息的写入操作  
+
+{: .note }
+准入插件NodeRestriction用来限制kubelet只能修改写入其自己所在节点相关的资源  
+
+## 5. ABAC (Attribute-based access control)
+
+- ABAC 通过使用将属性组合在一起的策略来向用户授予访问权限  
+- 要启用 ABAC 模式，可以在启动时指定 --authorization-policy-file=SOME_FILENAME 和 --authorization-mode=ABAC。
+
+策略访问文件格式如下：
+
+```json
+{"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"group":"system:authenticated",  "nonResourcePath": "*", "readonly": true}}
+{"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"group":"system:unauthenticated", "nonResourcePath": "*", "readonly": true}}
+{"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"admin",     "namespace": "*",              "resource": "*",         "apiGroup": "*"                   }}
+{"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"scheduler", "namespace": "*",              "resource": "pods",                       "readonly": true }}
+{"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"scheduler", "namespace": "*",              "resource": "bindings"                                     }}
+{"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"kubelet",   "namespace": "*",              "resource": "pods",                       "readonly": true }}
+{"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"kubelet",   "namespace": "*",              "resource": "services",                   "readonly": true }}
+{"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"kubelet",   "namespace": "*",              "resource": "endpoints",                  "readonly": true }}
+{"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"kubelet",   "namespace": "*",              "resource": "events"                                       }}
+{"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"alice",     "namespace": "projectCaribou", "resource": "*",         "apiGroup": "*"                   }}
+{"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"bob",       "namespace": "projectCaribou", "resource": "*",         "apiGroup": "*", "readonly": true }}
+```
+
+例如，如果你要使用 ABAC 将（kube-system 命名空间中）的默认服务账号完整权限授予 API， 则可以将此行添加到策略文件中：
+
+```json
+{"apiVersion":"abac.authorization.kubernetes.io/v1beta1","kind":"Policy","spec":{"user":"system:serviceaccount:kube-system:default","namespace":"*","resource":"*","apiGroup":"*"}
+```
+
+## 6. 准入控制器
+
+- 启用准入控制器`kube-apiserver --enable-admission-plugins=NamespaceLifecycle,LimitRanger ...`
+- 关闭准入控制器`kube-apiserver --disable-admission-plugins=PodNodeSelector,AlwaysDeny ...`
+- 要查看哪些插件是被启用`kube-apiserver -h | grep enable-admission-plugins`
+- 每个准入控制器的作用,[参考](https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/admission-controllers/)。
+- 准入控制过程分为两个阶段。第一阶段，运行变更准入控制器。第二阶段，运行验证准入控制器。 某些控制器既是变更准入控制器又是验证准入控制器  
+
+{: .highlight }
+如果两个阶段之一的任何一个控制器拒绝了某请求，则整个请求将立即被拒绝，并向最终用户返回错误
+
+## 7. 动态准入控制
+
+- Mutating可以修改请求的yaml（会优先调用）
+- Validating只能验证请求的yaml  
+- 具体参考[官方文档](https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/extensible-admission-controllers/)
+
+### 7.1 MutatingAdmissionWebhook
+
+```yaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+webhooks:
+  - name: my-webhook.example.com
+    namespaceSelector:
+      matchExpressions:
+        - key: runlevel
+          operator: NotIn
+          values: ["0", "1"]
+    rules:
+      - operations: ["CREATE"]
+        apiGroups: ["*"]
+        apiVersions: ["*"]
+        resources: ["*"]
+        scope: "Namespaced"
+```
+
+### 7.2 ValidatingAdmissionWebhook
+
+```yaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+webhooks:
+  - name: my-webhook.example.com
+    namespaceSelector:
+      matchExpressions:
+        - key: environment
+          operator: In
+          values: ["prod", "staging"]
+    rules:
+      - operations: ["CREATE"]
+        apiGroups: ["*"]
+        apiVersions: ["*"]
+        resources: ["*"]
+        scope: "Namespaced"
+```
