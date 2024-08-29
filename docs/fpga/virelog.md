@@ -72,3 +72,37 @@ has_children: false
 - 非阻塞赋值(<=): 如`b<=a`，用于时序逻辑
 - 在同一个always中不能同时存在两种赋值方式，在不同的always中不能对同一个变量赋值
 
+## 5. case 语句
+
+
+- case语句所有表达式的位宽必须相等
+- casez比较时，不考虑表达式中的高阻值
+- casex不考虑搞阻值z和不定值x
+
+```v
+always @ (posedeg clk or negedge rst_n ) begin
+    if (!rst_n)
+        seg_led <= 8'b0;
+    else begin
+        case (num)
+            4'h0 :  seg_led <= 8'b1100_000;
+            4'h1 :  seg_led <= 8'b1100_000;
+            4'h2 :  seg_led <= 8'b1100_000;
+            4'h3 :  seg_led <= 8'b1100_000;
+            4'h4 :  seg_led <= 8'b1100_000;
+            4'h5 :  seg_led <= 8'b1100_000;
+            4'h6 :  seg_led <= 8'b1100_000;
+            4'h7 :  seg_led <= 8'b1100_000;
+            4'h8 :  seg_led <= 8'b1100_000;
+            4'h9 :  seg_led <= 8'b1100_000;
+            4'ha :  seg_led <= 8'b1100_000;
+            4'hb :  seg_led <= 8'b1100_000;
+            4'hc :  seg_led <= 8'b1100_000;
+            4'hd :  seg_led <= 8'b1100_000;
+            4'he :  seg_led <= 8'b1100_000;
+            4'hf :  seg_led <= 8'b1100_000;
+            default: seg_led <= 8'b1100_000;
+        enndcase
+    end
+end
+```
