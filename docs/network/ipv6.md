@@ -26,7 +26,7 @@ has_children: false
 - 虽然iv6废除了NAT但是保留了这种思想，也就是scopes
 
     - Global scope: 全球唯一地址
-    - Site-local scope: 站点地址，一般是`fd00::/8`,或者`fc00::/8`
+    - Site-local scope: 站点地址（私有地址），一般是`fd00::/8`,或者`fc00::/8`
     - Link-local scope：本地链路地址，不会被路由比如：`fe80::/64`
 
 
