@@ -63,6 +63,26 @@ has_children: false
 [AR4-GigabitEthernet0/0/2]ip address 10.10.34.4 24
 ```
 
+### ospf DD报文
+
+
+两台路由器在邻接关系初始化时，用DD报文（Database Description
+Packet）来描述自己的LSDB，进行数据库的同步。报文内容包括LSDB中每一条LSA的Header（LSA的Header可以唯一标识一条LSA）。LSA
+Header只占一条LSA的整个数据量的一小部分，这样可以减少路由器之间的协议报文流量，对端路由器根据LSA
+Header就可以判断出是否已有这条LSA。在两台路由器交换DD报文的过程中，一台为Master，另一台为Slave。由Master规定起始序列号，每发送一个DD报文序列号加1，Slave方使用Master的序列号作为确认。
+
+![ospf-dd](/assets/images/network/ospf-dd.png)
+
+|字段	             |长度|	含义|
+|:-------------|:------------------|:------|
+|Interface MTU	    |16比特	|在不分片的情况下，此接口最大可发出的IP报文长度。|
+|Options	        |8比特	|可选项：E：允许Flood AS-External-LSAs；MC：转发IP组播报文；N/P：处理Type-7 LSAs；DC：处理按需链路。|
+|I	                |1比特	|当发送连续多个DD报文时，如果这是第一个DD报文，则置为1，否则置为0。|
+|M (More)	        |1比特	|当发送连续多个DD报文时，如果这是最后一个DD报文，则置为0。否则置为1，表示后面还有其他的DD报文。|
+|M/S (Master/Slave)	|1比特	|当两台OSPF路由器交换DD报文时，首先需要确定双方的主从关系，Router ID大的一方会成为Master。当值为1时表示发送方为Master。|
+|DD sequence number	|32比特	|DD报文序列号。主从双方利用序列号来保证DD报文传输的可靠性和完整性。|
+|LSA Headers	    |可变	|该DD报文中所包含的LSA的头部信息。|
+
 
 ## ospf实验
 - 查看lsdb`disp ospf lsdb`
@@ -85,3 +105,85 @@ net 10.1.13.1 0.0.0.0
 
 - nssa配置是进入area以后直接`nssa`命令就行
 - totally nssa 则是在ABR上对应的区域执行`nssa no-summary`
+
+
+## IS-IS
+
+- NET（Network Entity Title，网络实体名称）是OSI协议栈中设备的网络层信息，主要用于路由计算，由区域地址（Area ID）、System ID和SEL组成，可以看作是特殊的NSAP（SEL为00的NSAP）。
+- NSAP:
+![nsap](/assets/images/network/isis-nsap.png)
+- DP（Initial Domain Part，初始域部分）相当于IP地址中的主网络号。
+ - AFI（Authority and Format Identifier，权限和格式标识符）表示地址分配机构和地址格式,39代表ISO数据国别编码，45代表E.164,49表示本地管理，相当于RFC1918的私有地址；
+ - IDI（Initial Domain Identifier，初始域标识符）IDI用来标识域。
+- DSP（Domian Specific Part，特定域部分）相当于IP地址中的子网号和主机地址。
+ - High Order DSP（高位DSP，HODSP）、System ID（系统ID）和NSEL（NSAP Selector，NSAP选择器）构成。
+  - 高位DSP用来将域划分为不同的区域；
+  - System ID用来标识OSI设备，区分主机，长度为6字节。
+- NSEL类似于TCP或UDP端口号，用于指示服务类型，不同的传输协议对应不同的NSEL，如在IP中，其值为0。
+![isis-net](/assets/images/network/isis-net.png)
+
+### 实验
+
+- `display isis peer`
+- `display isis lsdb`
+- `disp isis route`
+- `disp isis interface`
+- 进入接口后配置接口的isis的优先级大小为0-127数字越大优先级越高，修改优先级以后这个节点会选举为dis`isis dis-priority 127`
+- level1上只有level1 区域自己的路由，可以通过路由渗透把level2的路由引入`import-route isis level-2 into level-1`
+- 修改isis的接口类型为p2p,进入接口以后:`isis circuit-type  p2p`
+
+
+```shell
+# 基础配置 
+# 配置isis
+isis 1 # 默认1
+# 配置
+# 49.0001 域
+# 0000.0000.0001 同一个域内每个交换机不一样
+# 00 代表ip
+network-entity 49.0001.0000.0000.0001.00
+# 设置level
+is-level level-1
+
+```
+![isis](/assets/images/network/isis-shiyan.png)
+
+## stp
+
+- 修改设备为根桥`stp priority 0`
+- R 根端口
+- D 指定端口
+- A 替代端口
+
+- 只有指定端口才会发送BPDU
+- 根桥上所有端口都是指定端口
+- 非根桥交换机有且只有一个根端口（去环）
+- 根端口是用来接口BPDU的
+
+- BPDU超时时间20s
+
+- DP故障需要等待30s
+
+
+![bpdu](/assets/images/network/BPDU.png)
+
+## rstp
+
+- R 根端口 
+- D 指定端口
+- B 备份端口
+
+- 超时时间是三倍的hello time，6秒
+- 根端口故障直接切换到备份端口 
+
+
+- 根保护`stp root-pre`
+- 环路保护，在指定的接口下`stp loop-pre`
+- stp模式设置`stp mode rstp`
+- 配置根桥`stp root primary`
+- 配置备份根桥`stp root secondary` 
+
+
+
+
+## mstp
