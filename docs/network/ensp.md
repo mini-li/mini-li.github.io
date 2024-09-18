@@ -187,3 +187,104 @@ is-level level-1
 
 
 ## mstp
+
+## acl
+
+- rule 5 permit/deny
+
+
+## route-policy
+
+- isis 引入路由的时候过滤掉指定的路由
+- 注意这里的ip ip-prefix需要用permit因为route-policy 用力deny
+```shell
+isis
+import-route ospf 1 route-policy net192
+route-policy net192 deny node 10
+if-match ip-prefix net192
+ip ip-prefix net192 permit 192.168.1.0 24
+```
+- 引入路由的时候修改优先级,isis优先级是15，这里改为14比isis优先级低
+
+```shell
+ospf
+import-route isis  route-policy pre
+preference ase 14
+# 
+route-policy pre permit node 10
+if-match ip-prefix pre
+ip ip-prefix pre permit 192.168.1.0 24
+```
+
+## filer-policy
+
+![route-filter](/assets/images/network/route-filter.png)
+- 使用filter-policy破环
+
+ 
+```shell
+isis 
+filter-policy 2000 import
+quit
+acl 2000
+rule deny source 5.5.5.5 0
+# 默认规则，默认允许
+rule permit
+```
+
+
+## BGP
+
+- 报文
+ - open：建立peer
+ - update： 发送路由更新
+ - notification： 错误终止对等体
+ - keepalive：标志对等简历，维持bgp对等体关系
+ - route-refresh: 改变路由策略以后请求对等体重新发送路由信息
+- 状态机
+ - idel: 开始准备tcp链接
+ - connnect: 进入tcp链接，等待完成，如果tcp建立失败则进入active状态
+ - active： tcp没有建立成功，反复重试
+ - opensent：tcp建立成功，开始发送open包
+ - openconffirm: 参数协商
+ - established：收到keepalive包，双方协商一致
+- 4条通告原则
+ 1. 今发布路由
+ 2. 通过EBGP获得的最优路由发布给除路由获取端以外的所有BGP邻居（包括EBGP邻居和IBGP邻居）
+ 3. 通过IBGP获得的最优路由不会发布给其他的IBGP邻居（水平分割）
+ 4. BGP与IGP同步（从IBGP邻居学来的路由是否发布给BGP邻居，取决于该路由是否也能通过IGP得知，即BGP和IGP同步）
+
+- 端口179
+- 对等，IBGP对等AS号一样，EBGP对等AS号不一样
+- 一个路由器只能创建一个bgp
+- bgp路由前有`*`表示有效，`>`表示优选，`i`表示对等体（同一个as）发送的
+
+
+
+```shell
+# 创建bgp AS10
+bgp 10
+# 创建邻居
+peer 10.1.12.2 as-number 20
+
+# 配置静态路由
+ip route-static 2.2.2.2 32 10.1.12.2
+
+# 使用lo简历对等体
+peer 2.2.2.2 as-number 20
+peer 2.2.2.2 connect-interface LoopBack 0
+
+# ebgp 建立peer
+peer 1.1.1.1 as-number 10
+peer 1.1.1.1 connect-interface l0
+peer 1.1.1.1 ebgp-max-hop 2
+
+# 查看路由表，默认是空的
+disp bgp routing-table
+# 查看详细的
+disp bgp routing-table 192.168.1.0
+# 路由宣告
+network 192.168.1.0 24
+# 路由引入
+import-route direct/bgp
+```
