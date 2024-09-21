@@ -7,7 +7,23 @@ has_children: false
 
 
 ## 常用名字解释
-
+- DSCP（Differentiated Services Codepoint）：ip头中的第二个字节
+- MPLS域： 一系列连续的运行MPLS的网络设备构成的一个MPLS域
+ - LDP（Label Distribution Protocol）：标签转发协议,动态LSP
+  - FTN (FEC TO NHLFE): 当LSR收到IP报文并需要进行MPLS转发时使用，FTN只存在于Ingress中，FTN包括，Tunnel ID，FEC到NHLFE的映射信息
+  - NHLFE （Next Hop Label Forwarding Entry， 下一跳标签转发项）LSR对报文进行转发时使用，NHLFE在ingress和Transit存在，NHLFE包括：Tunnel ID,出接口，下一跳，出标签，标签操作等信息
+  - ILM（Incoming Label Map，入标签映射）：用于指导MPLS报文的转发，ILM只存在Transit和Egress，ILM包括：Tunnel ID,入 接口，入标签，标签操作等信息
+ - LFIB：标签转发信息表
+ - LIB： 标签信息表
+ - LSR（Label Switching Router,标间桥换路由器）：支持MPLS的路由器或者交换机，
+ - LER（Label Edge Router）:位于MPLS域边缘，链接其他网络的LSR出纳为边沿路由器
+ - Core LSR: MPLS域内部的LSR  
+ - Ingress LSR:入站LSR，通常想IP报文中压入MPLS头部并生成MPLS报文的LSR
+ - Trransit LSR：中转LSR，将MPLS报文进行标签置换操作
+ - Egress LSR:出站LSR，将MPLS报文中的MPLS头部移除 
+ - FEC(Forwarding Equivalence Class,转发等价类):具有一组某些共性的数据流的集合，通过与MPLS标签对应
+ - LSP（Label Switched Path，标签交换路劲）：标签报文穿越MPLS网络达到目的所走的路劲，同一个FEC通过存在用相同过的LSP，所以同一个FEC，LSR总是相同的标签 
+  - 单向性，去和回来都需要LSP
 - MPU: main processing unit 主处理单元
 - SFU: Switch fabric unit 交换结构单元
 - LPU: line processing unit 线路处理单元
