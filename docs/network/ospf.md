@@ -1,0 +1,96 @@
+---
+title: "ospf"
+layout: default
+parent: Network
+has_children: false
+---
+
+## 1. 基础信息
+
+- stub路由器的lsa的度量值为65535
+- 命令用来设置进行负载分担的等价路由的最大数量。`maximum load-balancing 1`,如果为1的话就没有负载均衡，最大值是16
+    - maximum load-balancing 为1时，如果路由的优先级相同则比较接口ID大的，选择大的作为出接口
+- ospf的router id变化以后需要重置进程,在**用户视图**下操作`reset ospf 1 process`
+- ipv4使用的ospfv2;ipv6使用ospfv3
+- ospf时链路状态路由协议
+- 路由器收到lsa以后会放入自己的lsdb中，然后分析lsa得到全网的拓扑
+- 使用SPF（Shortest Path First）算法
+- OSPF路由的优先级为10。当指定ASE(ase表示设置AS-External路由的优先级。)时，缺省优先级为150。
+- 224.0.0.5指代在任意网络中所有运行OSPF进程的接口都属于该组，于是接收所有224.0.0.5的组播数据包。
+- 224.0.0.6指代一个多路访问网络中DR和BDR的组播接收地址，
+- OSPF用IP报文直接封装协议报文，协议号为89
+- OSPF的3张表：邻居表`display ospf peer`、LSDB表`display ospf lsdb`、OSPF路由表`disp ospf routing`  
+- OSPF的4种网络类型: 广播类型（Broadcast 或 MA）也是默认类型、P2P、NBMA、P2MP
+    - 广播：
+        - Hello、LSU、LSACK通过组播发送，DD与LSR通过单播发送。
+        - 默认Hello10秒，Dead40秒。
+    - p2p:
+        - 默认链路为串口类型PPP、HDLC时，该链路的OSPF网络类型为P2P类型。
+        - 所有发送的OSPF报文（Hello，DD，LSR，LSU，LSACK）都通过组播
+        - 默认Hello10秒，Dead40秒。
+- OSPF分为5种报文：Hello报文、DD报文、LSR报文、LSU报文和LSAck报文。
+- OSPF的7种状态：
+    - Down     ：没有收到Hello包                         
+    - Attempt （一般不存在）
+    - Init     ：收到邻居发来的Hello包，但是收到Hello包中的邻居字段没有自己       
+    - 2-Way    ：收到邻居发来的Hello包的邻居列表中有自己，建立邻居关系        
+    - Exstart  ：  
+        发送DD报文（此处DD报文不包含LSA头部信息）  
+        **作用**  
+        决定主从关系（Router-ID大的为主路由器，小的为从路由器）  
+        确定序列号保证报文交互的可靠性  
+        比较MTU（可选，缺省不比较）  
+        **MTU对邻居建立的影响**  
+        1、主的MTU值比从设备的MTU值小；两端都会停留在Exstart状态  
+        2、主的MTU值比从设备的MTU值大；从设备会停留在Exchange状态，主设备停留在Exstart状态  
+        3、两端有一段未开启MTU值检测，则两端可以建立邻居  
+    - Exchange  
+        通过交换DD报文，交换LSA头部信息  
+        **具体的交互流程**  
+        上述Exstart状态决定出主从关系后，即从设备此时收到了主设备发来的空的DD报文  
+        从设备使用主的序列号发送DD报文来回应主（此时DD报文包含LSA头部信息）  
+        主也通过DD报文发送自己的LSA头部信息，并将序列号加1  
+        从又使用主的序列号回应主；一直循环，直到主与从的M位都不置位（或者说只要有一侧有未传递的LSA头，就会一直循坏）    
+    - Loading   
+        通过上述获得的LSA头部信息，来确定自己需要哪些LSA  
+        **具体实现方式**  
+        通过发送LSR请求、发送自己的LSA完整信息（LSU）给对方、发送LSACK确认信息来完成LSDB同步  
+    - Full: LSDB同步完成，建立邻接关系
+
+## 2. 名词解释
+
+- OSPF: Open Shortest Path First: 开放式最短路径优先
+    - DR （Designated Router）：多接入网络中的指定路由器
+    - BDR： 备份指定路由
+    - IR（Internal Router）：区域内路由器，所以接口都在一个区域内。
+    - ABR（Area Border Router）：区域边界路由器，接口属于两个区域以上，但必须有一个连接骨干区域
+    - BR（Backbone Router）：骨干路由器，至少有一个接口属于骨干区域。
+    - ASBR（AS Boundary Router）：自治系统边界路由器，该类路由器与其他AS交换路由信息。只要一台OSPF路由器引入了外部路由的信息，它就成为ASBR。
+- LSDB: Link State DataBase: 链路状态数据库
+- LSA: Link-State Advertisement: 链路状态通告
+    - LSA Type 1 - Router LSA（路由器LSA）：设备自身的链路状态和开销
+    - LSA Type 2 - Network LSA（网络LSA）： 由DR产生，秒速MA（多路访问）网络的具体情况
+    - LSA Type 3 - Network Summary LSA（汇总LSA）：由ABR（Area Border Router）产生。
+    - LSA Type 4 - ASBR-Summary LSA（ASBR汇总LSA）：ASBR-Summary LSA是由ASBR（AS Boundary Router）产生的。
+    - LSA Type 5 - AS-External-LSA（AS外部LSA）AS-External-LSA同样也是由ASBR（AS Boundary Router）产生的。
+    - LSA Type 7 - NSSA LSA（NSSA LSA）：由NSSA区域或Totally NSSA区域的NSSA ASBR产生。
+
+  
+
+
+## 3. 报文，[参考](https://support.huawei.com/enterprise/zh/doc/EDOC1100278276/aa8766d8)
+
+- 报文头,五种报文使用相同过的报文头格式
+
+![ospf报文头](/assets/images/network/ospf报文头.png)
+
+- 报文头格式解释
+
+![格式说明](/assets/images/network/ospf报文头格式说明.png)
+
+
+### hello报文
+
+- 最常用的一种报文，其作用为建立和维护邻接关系，周期性的在使能了OSPF的接口上发送。报文内容包括一些定时器的数值、DR、BDR以及已知的邻居
+
+![hello-head](/assets/images/network/ospf-hello-head.png)

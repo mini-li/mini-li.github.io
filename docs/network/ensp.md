@@ -6,7 +6,26 @@ has_children: false
 ---
 
 
+## 常见协议及使用的端口
+- LDP：Discovery（Hello）消息使用UDP（端口646）LDP的Session消息、Advertisement消息和Notification消息都使用TCP（端口646）。
+- RADIUS: 用UDP（User Datagram Protocol）的RADIUS报文格式及其传输机制，并规定UDP端口1812、1813分别作为默认的认证、计费端口
+
+
 ## 常用名字解释
+- NDP （icmpv6）: type
+ - 133 RS路由请求
+ - 134 路由通告
+ - 135 邻居请求
+ - 136 邻居通告
+ - 137 重定向请求
+
+- CSS （cluster Switch system） 集群
+- iStack 堆叠
+ - 堆叠以后没有环路无需stp和vrrp
+- MAD （Multi-Active Detection） 多主检测
+ - 直连检测和代理检测，两种互斥只能选择一种
+
+- VRRP（Virtual Router Redundancy Protocol）虚拟路由冗余协议是：一种用于提高网络可靠性的容错协议
 - DSCP（Differentiated Services Codepoint）：ip头中的第二个字节
 - MPLS域： 一系列连续的运行MPLS的网络设备构成的一个MPLS域
  - LDP（Label Distribution Protocol）：标签转发协议,动态LSP
@@ -24,6 +43,9 @@ has_children: false
  - FEC(Forwarding Equivalence Class,转发等价类):具有一组某些共性的数据流的集合，通过与MPLS标签对应
  - LSP（Label Switched Path，标签交换路劲）：标签报文穿越MPLS网络达到目的所走的路劲，同一个FEC通过存在用相同过的LSP，所以同一个FEC，LSR总是相同的标签 
   - 单向性，去和回来都需要LSP
+- mpls vpn
+ - CE ( Customer Edge,用户侧的边缘路由器)，一般链接到PE
+ - PE（Provider Edge，运营商的边缘路由器）
 - MPU: main processing unit 主处理单元
 - SFU: Switch fabric unit 交换结构单元
 - LPU: line processing unit 线路处理单元
@@ -32,21 +54,7 @@ has_children: false
 - FIB: forwarding information base 转发信息库 (在数据平面)
 - IGP: interior gateway protocol: 在一个自治系统（AS）内部运行（常见的IGP协议包括OSPF、IS-IS）
 - EGP: exterior gateway protocol: 运行在不同的自治系统(AS)之间（BGP是最常见的EGP协议）
-- OSPF: Open Shortest Path First: 开放式最短路径优先
- - DR （Designated Router）：多接入网络中的指定路由器
- - BDR： 备份指定路由器
- - IR（Internal Router）：区域内路由器，所以接口都在一个区域内。
- - ABR（Area Border Router）：区域边界路由器，接口属于两个区域以上，但必须有一个连接骨干区域
- - BR（Backbone Router）：骨干路由器，至少有一个接口属于骨干区域。
- - ASBR（AS Boundary Router）：自治系统边界路由器，该类路由器与其他AS交换路由信息。只要一台OSPF路由器引入了外部路由的信息，它就成为ASBR。
-- LSDB: Link State DataBase: 链路状态数据库
-- LSA: Link-State Advertisement: 链路状态通告
- - LSA Type 1 - Router LSA（路由器LSA）：设备自身的链路状态和开销
- - LSA Type 2 - Network LSA（网络LSA）： 由DR产生，秒速MA（多路访问）网络的具体情况
- - LSA Type 3 - Network Summary LSA（汇总LSA）：由ABR（Area Border Router）产生。
- - LSA Type 4 - ASBR-Summary LSA（ASBR汇总LSA）：ASBR-Summary LSA是由ASBR（AS Boundary Router）产生的。
- - LSA Type 5 - AS-External-LSA（AS外部LSA）AS-External-LSA同样也是由ASBR（AS Boundary Router）产生的。
- - LSA Type 7 - NSSA LSA（NSSA LSA）：由NSSA区域或Totally NSSA区域的NSSA ASBR产生。
+
 
 - 路由迭代：路由必须有直连的下一跳才能指导转发，静态路由或者BGP路由的下一跳可能不是直连的邻居，因此需要计算出一个直连的下一跳，这个过程叫做路由迭代
 - 路由引入：将一个路由的信息从一种路由协议发布到另一种路由协议
