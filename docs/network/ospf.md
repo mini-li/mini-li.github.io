@@ -7,6 +7,14 @@ has_children: false
 
 ## 1. 基础信息
 
+### 1.1 如何防环
+- 非骨干区域与骨干区域直接物理连接
+- 骨干区域传来的3类lsa不再传回骨干区域
+### 1.2 如果骨干区域不连续
+- 使用虚连接：`vlink-peer router-id(邻居的)`，单播建立邻居，使用的是p2p网络类型
+
+- OSPF IP FRR（Fast Reroute）利用全网链路状态数据库，预先计算出备份路径保存在转发表中，以备在故障时提供流量保护，将故障恢复时间降低
+- `lsdb-overflow-limit number`命令用来设置OSPF的LSDB中External LSA的最大条目数。
 - DR 选举是非抢占的
     - 如果新加入优先级高的需要reset现有的DR和BDR才会把优先级高的设置为DR（默认为1，0代表放弃），如果优先级相同使用route-id,并且值大的优先
 - stub路由器的lsa的度量值为65535
@@ -32,6 +40,7 @@ has_children: false
     - NBMA:
         - 默认Hello 30秒，Dead 30*4=120秒（响应超时是4倍时间）。
     - p2p:
+        - 没有2类lsa
         - 默认链路为串口类型PPP、HDLC时，该链路的OSPF网络类型为P2P类型。
         - 所有发送的OSPF报文（Hello，DD，LSR，LSU，LSACK）都通过组播
         - 默认Hello10秒，Dead40秒。
@@ -99,13 +108,15 @@ has_children: false
         - Type1中Link State ID: 生成这条LSA的路由器的Router ID。
         - Type2中Link State ID: 描述网段上DR的端口IP地址。
         - Type3中Link State ID: 描述区域内网段。
-        - Type4中Link State ID: ASBR的Route ID 。
-        - Type5中Link State ID: 外部路由的网段。
+        - Type4中Link State ID: ASBR的Route ID 。**通告给除asbr所在的区域，以及特殊区域**
+        - Type5中Link State ID: 外部路由目的网络的网络前缀。 `disp ospf lsdb ase`
         - Type7中Link State ID: 外部路由的网段。
 
     - AdvRouter （宣告的路由器）
 
-  
+- 外部路由类型
+    - type 1：as内部开销+外部开销
+    - type 2：只计算外部开销65535，**默认类型**
 
 ## 3.  报文交互过程
 
@@ -122,6 +133,7 @@ has_children: false
 - 报文头格式解释
 
 ![格式说明](/assets/images/network/ospf报文头格式说明.png)
+
 
 
 ### 4.1 hello报文
@@ -183,3 +195,75 @@ has_children: false
 
 
 
+### 4.3 LSA头
+
+![lsa-head](/assets/images/network/ospf-lsa-head.png)
+![lsa-head-解释](/assets/images/network/ospf-lsa-头字段解释.png)
+
+### 4.4 router-las
+![ospf-router-lsa](/assets/images/network/ospf-router-lsa.png)
+![ospf-router-lsa-jieshi](/assets/images/network/osspf-router-lsa-1.png)
+
+
+
+## 5. 特殊区域
+- 区域类型
+    - 传输区域（Transit Area）
+    - 末端区域 (Stub Area)
+
+| 区域类型 | 包含的lsa类型 | 不包含的lsa类型 |
+|-------|-------|-------|
+| stub | 1，2，3， | 4，5，7 |
+| totally stub | 1，2 | 3, 4，5，7 |
+| nssa | 1，2, 3, 7 |  4，5 |
+| totally nssa | 1，2 ,7 |  3, 4，5 |
+
+
+
+
+### 5.1 Stub和totally Stub
+
+- Stub
+    - 骨干区域不能配置Stub区域
+    - Stub区域内的所有路由都需要配置Stub
+    - Stub区域内不能引入SA外部路由
+    - Stub区域不支持虚连接
+    - stub 不传播4类、7类和5类路由，通过ABR生成默认路由（三类）
+        - sum-net 0.0.0 x.x.x.x
+        - sum-net 10.x.x.x x.x.x.x (明细)
+- Totally Stub
+    - 只需要在abr上执行`stub no-summary`
+    - 减少3类明细，有三类缺省路由
+        - sum-net 0.0.0 x.x.x.x （只有三类缺省了）
+        
+
+
+### 5.2 NSSA （not so stub area）
+
+- **与Stub区别可以引入外部路由**
+- 引入的7类路由会在abr转化为5类
+
+- Totally NSSA
+    - 只需要在abr上执行`NSSA no-summary`
+
+
+
+## 6. 路由汇总，路由聚合
+
+
+- abr汇总：对区域间的路由执行汇总: 在ospf的区域视图下操作`abr-summary 172.16.0.0 255.255.0.0`
+    - 明细发生变化以后只影响区域内
+- asbr汇总：对引入的外部路由进行汇总：在ospf的区域视图下操作`asbr-summary 172.16.0.0 255.255.0.0`
+
+- 执行汇总以后只向Area 0 通过路由172.16.0.0
+![汇总](/assets/images/network/ospf-路由汇总.png)
+
+## 7. ospf 认证 [参考](https://bbs.huaweicloud.com/blogs/406306)
+- 明文认证： 明文认证`authentication-mode simple` 设置密码`authentication-key <password>`
+- MD5认证:  `authentication-mode md5` 密码`authentication-key 7 <password>  # 设置认证密码`
+- SHA-HMAC身份验证: `authentication-mode hmac-sha256` 密码key`authentication-key-id 1` 密码`authentication-key hmac-sha256 <password> `
+
+
+- 区域认证：一个区域中的所有路由器在该区域下的认证模式和口令必须一致
+- 接口认证：只需要相邻的路由认证一样就行
+- 如果两个都做了，接口认证优先
