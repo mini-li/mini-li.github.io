@@ -7,6 +7,9 @@ has_children: false
 
 ## 1. 基础信息
 
+- 优先级 10
+- 是基于ip的
+
 ### 1.1 如何防环
 - 非骨干区域与骨干区域直接物理连接
 - 骨干区域传来的3类lsa不再传回骨干区域
@@ -16,7 +19,8 @@ has_children: false
 - OSPF IP FRR（Fast Reroute）利用全网链路状态数据库，预先计算出备份路径保存在转发表中，以备在故障时提供流量保护，将故障恢复时间降低
 - `lsdb-overflow-limit number`命令用来设置OSPF的LSDB中External LSA的最大条目数。
 - DR 选举是非抢占的
-    - 如果新加入优先级高的需要reset现有的DR和BDR才会把优先级高的设置为DR（默认为1，0代表放弃），如果优先级相同使用route-id,并且值大的优先
+    - 如果新加入优先级高的需要reset现有的DR和BDR才会把优先级高的设置为DR（默认为1，0代表放弃，范围-0255），如果优先级相同使用route-id(默认是使用接口地址大的),并且值大的优先,
+    - 时间waiting time 达到40s
 - stub路由器的lsa的度量值为65535
 - 命令用来设置进行负载分担的等价路由的最大数量。`maximum load-balancing 1`,如果为1的话就没有负载均衡，最大值是16
     - maximum load-balancing 为1时，如果路由的优先级相同则比较接口ID大的，选择大的作为出接口
@@ -267,3 +271,27 @@ has_children: false
 - 区域认证：一个区域中的所有路由器在该区域下的认证模式和口令必须一致
 - 接口认证：只需要相邻的路由认证一样就行
 - 如果两个都做了，接口认证优先
+
+
+## ospfv3
+
+### ospfv3 lsa
+
+- 相对于v2 Network Summary LSA的3类lsa变成了 Inter-Area-Prefix-Lsa，内容是一样的也是描述么某个区域内的网段并通告给其他区域
+- 相对于v2 ASBR-Summary LSA（ASBR汇总LSA） 4类lsa变成了Inter-Area-Router-LSA（Type4） 由ABR产生，描述到ASBR的路由，通告给除ASBR所在区域的其他相关区域。
+
+**新增**
+
+- Link-LSA（Type8）每个设备都会为每个链路产生一个Link-LSA，描述到此Link上的link-local地址、IPv6前缀地址，并提供将会在Network-LSA中设置的链路选项，它仅在此链路内传播
+- Intra-Area-Prefix-LSA（Type9）每个设备及DR都会产生一个或多个此类LSA，在所属的区域内传播。
+    - 设备产生的此类LSA，描述与Route-LSA相关联的IPv6前缀地址。
+    - DR产生的此类LSA，描述与Network-LSA相关联的IPv6前缀地址。
+- GRACE-LSA（Type11）每个支持Graceful Restart业务的设备，在Graceful Restart过程中，为每个接口发布此类LSA，在指定接口通告。
+- OSPFv3 Router Information (RI) LSA（Type12）每个设备需要发布本设备的扩展信息时会产生此类LSA，分为两类：
+    - Area Router Information LSA ：在所属区域内传播。例如：SRv6 Capabilities TLV、SR-Algorithm TLV、SRv6 NODE MSD TLV、Dynamic Hostname TLV等。
+    - AS Router Information LSA，通告到所有的区域。例如：Dynamic Hostname TLV等。
+- E-Router-LSA（Type33）每个设备需要发布链路扩展TLV信息时会产生此类LSA，在所属区域内传播。例如：链路扩展发布End.X SID Sub-TLV、Local Interface IPv6 Address Sub-TLV等。
+- E-AS-External-LSA（Type37） 由ASBR产生，描述AS外部路由关联的扩展TLV信息，通告到所有的区域。
+
+
+![ospfv3-lsa](/assets/images/network/ospfv3-lsa.png)

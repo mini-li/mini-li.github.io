@@ -9,6 +9,19 @@ has_children: false
 
 - dhcp使用udp协议，服务端端口号68，客户端端口号67
 
+- **DHCP Snooping信任功能**，保证dhcp服务器的正确性
+    - 信任接口正常接收DHCP服务器响应的DHCP ACK、DHCP NAK和DHCP Offer报文。
+    - 非信任接口在接收到DHCP服务器响应的DHCP ACK、DHCP NAK和DHCP Offer报文后，丢弃该报文。
+
+- **DHCP Snooping绑定表** 
+    - 连接在二层接入设备上的PC配置为自动获取IP地址，DHCP服务器将含有IP地址信息的DHCP ACK报文通过单播的方式发送给PC，
+    - 二层接入设备收到DHCP ACK报文后，会从该报文中提取关键信息（包括PC的MAC地址以及获取到的IP地址、地址租期），并获取与PC连接的使能了DHCP Snooping功能的接口信息（包括接口编号及该接口所属的VLAN），根据这些信息生成DHCP Snooping绑定表
+    - DHCP Snooping绑定表根据DHCP租期进行老化或根据用户释放IP地址时发出的DHCP Release报文自动删除对应表项。
+    - 由于DHCP Snooping绑定表记录了DHCP客户端IP地址与MAC地址等参数的对应关系，故通过对报文与DHCP Snooping绑定表进行匹配检查，能够有效防范非法用户的攻击
+    - 为了保证设备在生成DHCP Snooping绑定表时能够获取到用户MAC等参数，DHCP Snooping功能需应用于二层网络中的接入设备或第一个DHCP Relay上
+![dhcp-binding-table](/assets/images/network/dhcp-snooping-binding-table.png)
+
+
 ## 交互流程
 
 - 客户端执行DHCP-DISCOVER后，如果没有DHCP服务器响应客户端的请求，客户端会随机使用169.254.0.0/16网段中的一个IP地址配置到本机地址。

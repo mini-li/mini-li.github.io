@@ -6,6 +6,10 @@ has_children: false
 ---
 
 
+## 尝试
+- 交换机链路优先级，系统LACP优先级值越小优先级越高，缺省情况下，系统LACP优先级为32768。
+
+
 ## 常见协议及使用的端口
 - LDP：Discovery（Hello）消息使用UDP（端口646）LDP的Session消息、Advertisement消息和Notification消息都使用TCP（端口646）。
 - RADIUS: 用UDP（User Datagram Protocol）的RADIUS报文格式及其传输机制，并规定UDP端口1812、1813分别作为默认的认证、计费端口
