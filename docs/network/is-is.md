@@ -9,6 +9,9 @@ has_children: false
 
 ## 基础信息
 
+
+- `default-route-advertise`命令用来配置运行IS-IS协议的设备生成缺省路由。
+    - `default-route-advertise always level-1`指定发布的缺省路由级别为Level-1。如果不指定级别，则默认为生成Level-2级别的缺省路由。
 - igp
 - 链路状态，不是基于tcp/ip的
 - 优先级15

@@ -105,4 +105,13 @@ LDP通过邻接体来维护对等体的存在，对等体的类型取决于维�
 
 
 ## mpls vpn
+- RT（Route Target）
+- RD（route distinguisher）作用就是让BGP可以区分重复的路由前缀,每个VRF（VPN实例）都必须配置至少一个RD
 
+- **RT的两个方向区别**：
+
+    - Export Target：本地PE从直接相连Site学到IPv4路由后，转换为VPN-IPv4路由，并为这些路由设置Export Target属性。Export Target属性作为BGP的扩展团体属性随路由发布。
+    - Import Target：PE收到其它PE发布的VPN-IPv4路由时，检查其Export Target属性。当此属性与PE上某个VPN实例的Import Target匹配时，PE就把路由加入到该VPN实例中。
+
+- **RD和RT的区别**：
+    - RD是用来区分不同路由的，一个VRF只能由一个RD，且一条VPNv4路由也只有一个RD，但可以关联多个RT

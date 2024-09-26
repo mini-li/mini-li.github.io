@@ -8,6 +8,7 @@ has_children: false
 
 ## 基础知识
 
+- peer allow-as-loop命令用来配置本地AS号的重复次数。
 
 - bgp（Path-Vector Routing Protoccol）:路径矢量路由协议
 

@@ -52,7 +52,7 @@ has_children: false
     - Hello报文、组播报文，协议号89，使用224.0.0.5，默认状态为Down,如果从邻居收到的报文中不包含自己的router id则状态变为init,如果包含则状态为2-way
     - DD报文、主从协商
     - LSR报文、
-    - LSU报文
+    - LSU报文、
     - LSAck报文。
 - OSPF的7种状态：
     - Down     ：没有收到Hello包                         
