@@ -33,6 +33,7 @@ has_children: false
 - 邻居关系的建立：
     - 点点网络是两次握手/三次握手，华为默认是三次
     - 广播网络是三次握手
+
 - OL(overload),系统重启以后维护过载时间默认是600s
 
 - **NSAP**
@@ -72,7 +73,7 @@ has_children: false
         -  `attached-bit advertise never` 不ATT置位  
         -  `attached-bit advertise always` ATT置位  
         - 这里需要注意的是，level1与level2在不同的区域才会有这种情况
-        - LSP刷新周期的缺省值为900秒。
+        - LSP刷新周期的缺省值为900秒。 LSP的刷新间隔为15分钟；老化时间为20分钟
     - SNP 描述全部的或者部分链路数据中的LSP来同步个各LSDB，类似于ospf的DD
         - CSNP（Complete Sequence Number PDU,全部序列报文），区分level 1和level 2
         - PSNP（Partial Sequence Number PDU， 部分序列报文），区分level 1和level 2

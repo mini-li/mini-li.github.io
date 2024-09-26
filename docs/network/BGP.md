@@ -8,6 +8,8 @@ has_children: false
 
 ## 基础知识
 
+- keepalive报文--用于维护BGP邻居关系，默认保持时间为60秒，老化时间为180秒。
+
 - peer allow-as-loop命令用来配置本地AS号的重复次数。
 
 - bgp（Path-Vector Routing Protoccol）:路径矢量路由协议
