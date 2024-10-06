@@ -99,7 +99,8 @@ OCI支持Linux内核支持的7种类型：
 
 task(进程)->cgroup（把进程放入）->subsystem
 
-- 可以操作的对象基本只有cpu，内存，还有设备和挂起
+- 可以操作的对象基本只有cpu，内存，还有设备和挂起,恢复
+- 可以通过systemd-run或者cgcreate等cgroup的工具来操作
 - tasks和cgroup.procs有什么区别呢？按照官方文档的描述，将pid写入cgroup.procs，则该pid所在的线程组及该pid的子进程等都会自动加入到cgroup中。将pid写入tasks，则只限制该pid。
 
 - **subsystem**
