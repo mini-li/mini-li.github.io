@@ -40,16 +40,26 @@ SP: plan9 的这个 SP 寄存器指向当前栈帧的局部变量的开始位置
 
 ## 长度
 
-MOVB $1, DI      // 1 byte
-MOVW $0x10, BX   // 2 bytes
-MOVD $1, DX      // 4 bytes
-MOVQ $-10, AX    // 8 bytes
-
+[1]byte	MOVB	B => Byte
+[2]byte	MOVW	W => Word
+[4]byte	MOVL	L => Long
+[8]byte	MOVQ	Q => Quadword
 ## 常见指令
 
 ADDQ  AX, BX   // BX += AX
 SUBQ  AX, BX   // BX -= AX
 IMULQ AX, BX   // BX *= AX
+
+
+LEA	    取地址
+PUSH	压栈
+POP	    出栈
+
+
+JMP	        无条件跳转
+JMP-if-x	有条件跳转，JL、JLZ、JE、JNE、JG、JGE
+CALL	    调用函数
+RET	        函数返回
 
 ## 跳转
 
@@ -136,3 +146,22 @@ TEXT ·get(SB), NOSPLIT, $0-8
     MOVQ AX, ret+0(FP)
     RET
 ```
+
+## 函数
+
+`TEXT symbol(SB), [flags,] $framesize[-argsize]`
+
+函数的定义部分由 5 个部分组成：TEXT 指令、函数名、可选的 flags 标志、函数帧大小和可选的函数参数大小。
+
+其中 TEXT 用于定义函数符号，函数名中当前包的路径可以省略。
+函数的名字后面是 (SB)，表示是函数名符号相对于 SB 伪寄存器的偏移量，二者组合在一起最终是绝对地址。
+作为全局的标识符的全局变量和全局函数的名字一般都是基于 SB 伪寄存器的相对地址。
+标志部分用于指示函数的一些特殊行为，标志在 textflag.h 文件中定义，常见的 NOSPLIT 主要用于指示叶子函数不进行栈分裂。
+framesize 部分表示函数的局部变量需要多少栈空间，其中包含调用其它函数时准备调用参数的隐式栈空间。
+最后是可以省略的参数大小，之所以可以省略是因为编译器可以从 Go 语言的函数声明中推导出函数参数的大小。
+
+
+目前可能遇到的函数标志有 NOSPLIT、WRAPPER 和 NEEDCTXT 几个。
+其中 NOSPLIT 不会生成或包含栈分裂代码，这一般用于没有任何其它函数调用的叶子函数，这样可以适当提高性能。
+WRAPPER 标志则表示这个是一个包装函数，在 panic 或 runtime.caller 等某些处理函数帧的地方不会增加函数帧计数。
+最后的 NEEDCTXT 表示需要一个上下文参数，一般用于闭包函数。
