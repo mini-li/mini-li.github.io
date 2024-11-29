@@ -5,6 +5,22 @@ parent: go
 has_children: false
 ---
 
+# plan9
+
+## register
+Data register:R0-R7
+address register: A0-A7
+floating-point register:F0-F7
+ardware registers: ` CAAR, CACR, CCR, DFC, ISP, MSP, SFC, SR, USP, and VBR.`
+pseudo-registers: ` FP, SP, and TOS.`
+    - FP is the frame pointer, so 0(FP) is the first argument, 4(FP) is the second, and so on
+    - SP is the local stack pointer,where automatic variables are held,0(SP) is the first automatic, and so on as with FP
+    - TOS is the top-of-stack register, used for pushing parameters to procedures, saving temporary values, and so on.
+
+
+
+
+
 # 符号
 
 ## 4个伪寄存器
